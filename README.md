@@ -8,7 +8,8 @@ This is a TensorFlow implementation for our paper [Exploration via Hindsight Goa
 2. MuJoCo == 1.50.1.68
 3. TensorFlow >= 1.8.0
 4. BeautifulTable == 0.7.0
-5. gym < 0.22
+5. pip install gym==0.21.0
+
 
 ## Running Commands
 

@@ -40,6 +40,7 @@ if __name__=='__main__':
 			args.logger.add_record('Timesteps', buffer.steps_counter)
 			args.logger.add_record('TimeCost(sec)', time.time()-start_time)
 
+
 			args.logger.tabular_show(args.tag)
 			args.logger.summary_show(buffer.counter)
 

@@ -161,8 +161,8 @@ class DDPG:
 		info, _ = self.sess.run([self.train_info_q, self.q_train_op], feed_dict)
 		return info
 
-	def normalizer_update(self, batch):
-		self.obs_normalizer.update(np.concatenate([batch['obs'], batch['obs_next']], axis=0))
+	dseeflf.obs_normalizer.update(np.concatenate([batch['obs'], batch['obs_next']], axis=0))
+ normalizer_update(self, batch):
 
 	def target_update(self):
 		self.sess.run(self.target_update_op)

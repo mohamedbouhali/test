@@ -105,6 +105,8 @@ class ReplayBuffer_Episodic:
 		self.sample_batch = self.sample_methods[args.alg]
 
 	def store_trajectory(self, trajectory):
+	#storing a trajectory in the replay buffer,	trajectory is  {'obs'[],'rews': [], 'acts': [],'done' [] }
+	#add every key, value in the buffer
 		episode = trajectory.ep
 		if self.energy:
 			energy = trajectory.energy(self.args.env)

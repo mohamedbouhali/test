@@ -44,6 +44,7 @@ class MatchSampler:
 
 		self.length = args.episodes
 		init_goal = self.env.reset()['achieved_goal'].copy()
+		#Putting it all together, the self.pool matrix is created by starting with a reshaped init_goal and adding random noise to each element. The resulting self.pool matrix has dimensions (self.length, self.dim) and is used as a pool of goals for exploration. Each row in this matrix represents a goal with added random noise
 		self.pool = np.tile(init_goal[np.newaxis,:],[self.length,1])+np.random.normal(0,self.delta,size=(self.length,self.dim))
 		self.init_state = self.env.reset()['observation'].copy()
 
@@ -71,6 +72,7 @@ class MatchSampler:
 			return self.pool[idx].copy()
 
 	def find(self, goal):
+	#Finds the closest goal in the pool to a given goal.
 		res = np.sqrt(np.sum(np.square(self.pool-goal),axis=1))
 		idx = np.argmin(res)
 		if test_pool:
@@ -83,6 +85,7 @@ class MatchSampler:
 			return
 
 		achieved_pool, achieved_pool_init_state = self.achieved_trajectory_pool.pad()
+		#achieved_pool is [] of trajectories
 		candidate_goals = []
 		candidate_edges = []
 		candidate_id = []
@@ -94,9 +97,13 @@ class MatchSampler:
 			feed_dict = {
 				agent.raw_obs_ph: obs
 			}
+			#The goal_concat function is used to concatenate the initial state(achieved_pool_init_state[i])
+			#with each achieved state in the trajectory (achieved_pool[i][j]).This results in a list of observations obs corresponding to different time steps within the trajectory.
 			value = agent.sess.run(agent.q_pi, feed_dict)[:,0]
+			# value set of Q-values.The [:, 0] extracts the Q-values for the first action (or state value) for each input.
 			value = np.clip(value, -1.0/(1.0-self.args.gamma), 0)
 			achieved_value.append(value.copy())
+			#this part calculate  Q-values for a set of observations corresponding to achieved states
 
 		n = 0
 		graph_id = {'achieved':[],'desired':[]}
@@ -109,6 +116,9 @@ class MatchSampler:
 		n += 1
 		self.match_lib.clear(n)
 
+
+        #Achieved goals are connected to the source,
+		#desired goals are connected to the sink, and edges are added between achieved and desired goals with associated costs.
 		for i in range(len(achieved_pool)):
 			self.match_lib.add(0, graph_id['achieved'][i], 1, 0)
 		for i in range(len(achieved_pool)):
